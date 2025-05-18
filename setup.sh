@@ -1,34 +1,26 @@
 #!/bin/bash
 
-set -e  # Stop on error
+set -e
 
-# Optional: Debug-Ausgaben
-echo "Starte Installation von Oh My Bash..."
+# Pfade und URLs
+REPO_URL="https://raw.githubusercontent.com/myt960/ohmybash/main"
+THEME_NAME="font"
+THEME_DIR="/root/.oh-my-bash/themes/$THEME_NAME"
+THEME_FILE="$THEME_DIR/$THEME_NAME.theme.sh"
 
-# Installiere Oh My Bash als root
+echo "📦 Installiere Oh My Bash..."
 export OSH="/root/.oh-my-bash"
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" || {
-  echo "Fehler bei der Installation von Oh My Bash"
-  exit 1
-}
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
-echo "Oh My Bash installiert."
+echo "🎨 Kopiere benutzerdefiniertes Theme..."
+mkdir -p "$THEME_DIR"
+curl -fsSL "$REPO_URL/font.theme.sh" -o "$THEME_FILE"
 
-# Theme-Datei kopieren
-echo "Kopiere benutzerdefinierte Theme-Datei..."
-
-THEME_SOURCE="$(dirname "$0")/custom/font.theme.sh"
-THEME_TARGET="/root/.oh-my-bash/themes/font/font.theme.sh"
-
-mkdir -p "$(dirname "$THEME_TARGET")"
-cp "$THEME_SOURCE" "$THEME_TARGET"
-
-echo "Theme-Datei erfolgreich kopiert."
-
-# Optional: Theme in .bashrc aktivieren
-if ! grep -q 'OSH_THEME="font"' /root/.bashrc; then
+echo "⚙️ Aktiviere Theme in /root/.bashrc..."
+if grep -q '^OSH_THEME=' /root/.bashrc; then
+  sed -i 's/^OSH_THEME=.*/OSH_THEME="font"/' /root/.bashrc
+else
   echo 'OSH_THEME="font"' >> /root/.bashrc
-  echo "Theme 'font' in /root/.bashrc gesetzt."
 fi
 
-echo "Setup abgeschlossen."
+echo "✅ Installation abgeschlossen. Starte eine neue Shell oder führe 'source ~/.bashrc' aus."
