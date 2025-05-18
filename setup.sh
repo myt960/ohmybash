@@ -1,40 +1,31 @@
 #!/bin/bash
 set -e
 
-# Variablen
-THEME_NAME="font"
-THEME_URL="https://raw.githubusercontent.com/myt960/ohmybash/main/font.theme.sh"
-THEME_DIR="/root/.oh-my-bash/themes/$THEME_NAME"
-THEME_FILE="$THEME_DIR/${THEME_NAME}.theme.sh"
-BASHRC="/root/.bashrc"
-
-echo "📦 1. Installiere Oh My Bash..."
-export OSH="/root/.oh-my-bash"
+# 1. oh-my-bash installieren
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
-echo "📁 2. Erstelle Theme-Verzeichnis: $THEME_DIR"
+# 2. Custom Theme Ordner anlegen, falls nicht vorhanden
+THEME_DIR="/root/.oh-my-bash/themes/font"
 mkdir -p "$THEME_DIR"
 
-echo "⬇️ 3. Lade Theme-Datei herunter von:"
-echo "$THEME_URL"
-curl -fsSL "$THEME_URL" -o "$THEME_FILE"
+# 3. Custom Theme downloaden (oder alternativ vom Repo klonen/kopieren)
+curl -fsSL https://raw.githubusercontent.com/myt960/ohmybash/main/font.theme.sh -o "$THEME_DIR/font.theme.sh"
 
-if [[ -f "$THEME_FILE" ]]; then
-  echo "✅ Theme-Datei gespeichert unter: $THEME_FILE"
-else
-  echo "❌ Fehler: Theme-Datei wurde NICHT gespeichert!"
-  exit 1
-fi
+# 4. Theme in der .bashrc setzen
+# Ersetze ggf. .bashrc durch .bash_profile oder .bash_aliases, je nach Setup
 
-echo "⚙️ 4. Setze Theme in $BASHRC..."
+BASHRC="/root/.bashrc"
+
+# Backup der .bashrc
+cp "$BASHRC" "${BASHRC}.bak"
+
+# Theme in der .bashrc setzen
+# Sucht nach einer Zeile mit "OSH_THEME=" und ersetzt sie, oder fügt sie hinzu, falls nicht vorhanden
+
 if grep -q '^OSH_THEME=' "$BASHRC"; then
-  sed -i "s/^OSH_THEME=.*/OSH_THEME=\"$THEME_NAME\"/" "$BASHRC"
+    sed -i 's/^OSH_THEME=.*/OSH_THEME="font"/' "$BASHRC"
 else
-  echo "OSH_THEME=\"$THEME_NAME\"" >> "$BASHRC"
+    echo 'OSH_THEME="font"' >> "$BASHRC"
 fi
 
-echo "🧠 5. Inhalt der Theme-Datei (Vorschau):"
-head -n 10 "$THEME_FILE"
-
-echo "✅ Fertig! Starte eine neue Shell oder führe:"
-echo "source ~/.bashrc"
+echo "Setup abgeschlossen. Bitte öffne ein neues Terminal oder lade die Konfiguration mit 'source $BASHRC' neu."
