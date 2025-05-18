@@ -1,10 +1,11 @@
 #!/bin/bash
 set -e
 
-REPO_BASE="https://raw.githubusercontent.com/myt960/ohmybash/main"
+# Variablen
 THEME_NAME="font"
+THEME_URL="https://raw.githubusercontent.com/myt960/ohmybash/main/font.theme.sh"
 THEME_DIR="/root/.oh-my-bash/themes/$THEME_NAME"
-THEME_FILE="$THEME_DIR/$THEME_NAME.theme.sh"
+THEME_FILE="$THEME_DIR/${THEME_NAME}.theme.sh"
 BASHRC="/root/.bashrc"
 
 echo "📦 1. Installiere Oh My Bash..."
@@ -14,25 +15,26 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/mast
 echo "📁 2. Erstelle Theme-Verzeichnis: $THEME_DIR"
 mkdir -p "$THEME_DIR"
 
-echo "⬇️ 3. Lade Theme-Datei herunter..."
-curl -fsSL "$REPO_BASE/font.theme.sh" -o "$THEME_FILE"
+echo "⬇️ 3. Lade Theme-Datei herunter von:"
+echo "$THEME_URL"
+curl -fsSL "$THEME_URL" -o "$THEME_FILE"
 
 if [[ -f "$THEME_FILE" ]]; then
-  echo "✅ Theme-Datei erfolgreich unter $THEME_FILE gespeichert."
+  echo "✅ Theme-Datei gespeichert unter: $THEME_FILE"
 else
-  echo "❌ Fehler: Theme-Datei wurde nicht heruntergeladen."
+  echo "❌ Fehler: Theme-Datei wurde NICHT gespeichert!"
   exit 1
 fi
 
 echo "⚙️ 4. Setze Theme in $BASHRC..."
 if grep -q '^OSH_THEME=' "$BASHRC"; then
-  sed -i 's/^OSH_THEME=.*/OSH_THEME="font"/' "$BASHRC"
+  sed -i "s/^OSH_THEME=.*/OSH_THEME=\"$THEME_NAME\"/" "$BASHRC"
 else
-  echo 'OSH_THEME="font"' >> "$BASHRC"
+  echo "OSH_THEME=\"$THEME_NAME\"" >> "$BASHRC"
 fi
 
-echo "🧹 5. Bereinige ggf. alte PROMPT_COMMANDs..."
-sed -i '/^PROMPT_COMMAND=/d' "$BASHRC"
+echo "🧠 5. Inhalt der Theme-Datei (Vorschau):"
+head -n 10 "$THEME_FILE"
 
-echo "✅ 6. Installation abgeschlossen."
-echo "➡️  Starte eine neue Shell oder führe: source $BASHRC"
+echo "✅ Fertig! Starte eine neue Shell oder führe:"
+echo "source ~/.bashrc"
